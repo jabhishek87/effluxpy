@@ -13,7 +13,7 @@ clean:
 	       .eggs *.egg .coverage
 	find effluxpy -type f -name "*.py[co]" -delete
 	find effluxpy -type d -name "__pycache__" -delete
-	$(MAKE) -C doc clean
+	$(MAKE) -C docs/docs_builder clean
 
 build-env:
 	mkdir -p build
@@ -30,11 +30,12 @@ upload: clean build-env
 	build/env3/bin/python setup.py sdist upload
 
 doc:
-	$(MAKE) -C doc html 2>&1 | grep -v \
+	$(MAKE) -C docs/docs_builder html 2>&1 | grep -v \
 		'WARNING: more than one target found for cross-reference'
+	cp -rv docs/docs_builder/.build/html/* docs/
 
 showdoc: doc
-	xdg-open file://${CURDIR}/doc/.build/html/index.html >> /dev/null
+	xdg-open file://${CURDIR}/docs/docs_builder/.build/html/index.html >> /dev/null
 
 pep8:
 	find effluxpy -type f -name "*.py" -exec pep8 --ignore=E123,E126,E121 {} +
