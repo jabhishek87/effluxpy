@@ -88,9 +88,9 @@ class TestFile(unittest.TestCase):
         # test file command
         if effluxpy.compat.which('file'):
             f = self.module.File(tmp_txt, app=self.app)
-            self.assertEqual(f.mimetype, 'application/octet-stream')
-            self.assertEqual(f.type, 'application/octet-stream')
-            self.assertEqual(f.encoding, 'default')
+            self.assertEqual(f.mimetype, 'text/plain; charset=us-ascii')
+            self.assertEqual(f.type, 'text/plain')
+            self.assertEqual(f.encoding, 'us-ascii')
 
             f = self.module.File(tmp_err, app=self.app)
             self.assertEqual(f.mimetype, 'application/octet-stream')
