@@ -32,7 +32,6 @@ upload: clean build-env
 doc:
 	$(MAKE) -C docs/docs_builder html 2>&1 | grep -v \
 		'WARNING: more than one target found for cross-reference'
-	cp -rv docs/docs_builder/.build/html/* docs/
 
 showdoc: doc
 	xdg-open file://${CURDIR}/docs/docs_builder/.build/html/index.html >> /dev/null
