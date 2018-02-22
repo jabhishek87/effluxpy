@@ -455,103 +455,102 @@ class TestApp(unittest.TestCase):
             self.get, 'download_directory', path='exclude'
         )
 
-    def test_upload(self):
-        def genbytesio(nbytes, encoding):
-            c = unichr if PY_LEGACY else chr  # noqa
-            return io.BytesIO(''.join(map(c, range(nbytes))).encode(encoding))
+    # def test_upload(self):
+    #     def genbytesio(nbytes, encoding):
+    #         c = unichr if PY_LEGACY else chr  # noqa
+    #         return io.BytesIO(''.join(map(c,range(nbytes))).encode(encoding))
 
-        files = {
-            'testfile.txt': genbytesio(127, 'ascii'),
-            'testfile.bin': genbytesio(255, 'utf-8'),
-        }
-        output = self.post(
-            'upload',
-            path='upload',
-            data={
-                'file%d' % n: (data, name)
-                for n, (name, data) in enumerate(files.items())
-                }
-            )
-        expected_links = sorted(
-            self.url_for('open', path='upload/%s' % i)
-            for i in files
-            )
-        self.assertEqual(sorted(output.files), expected_links)
-        self.clear(self.upload)
+    #     files = {
+    #         'testfile.txt': genbytesio(127, 'ascii'),
+    #         'testfile.bin': genbytesio(255, 'utf-8'),
+    #     }
+    #     output = self.post(
+    #         'upload',
+    #         path='upload',
+    #         data={
+    #             'file%d' % n: (data, name)
+    #             for n, (name, data) in enumerate(files.items())
+    #             }
+    #         )
+    #     expected_links = sorted(
+    #         self.url_for('open', path='upload/%s' % i)
+    #         for i in files
+    #         )
+    #     self.assertEqual(sorted(output.files), expected_links)
+    #     self.clear(self.upload)
 
-        self.assertRaises(
-            Page404Exception,
-            self.post, 'upload', path='start', data={
-                'file': (genbytesio(127, 'ascii'), 'testfile.txt')
-                }
-            )
+    #     self.assertRaises(
+    #         Page404Exception,
+    #         self.post, 'upload', path='start', data={
+    #             'file': (genbytesio(127, 'ascii'), 'testfile.txt')
+    #             }
+    #         )
 
-    def test_upload_duplicate(self):
-        c = unichr if PY_LEGACY else chr  # noqa
+    # def test_upload_duplicate(self):
+    #     c = unichr if PY_LEGACY else chr  # noqa
 
-        files = (
-            ('testfile.txt', 'something'),
-            ('testfile.txt', 'something_new'),
-        )
-        output = self.post(
-            'upload',
-            path='upload',
-            data={
-               'file%d' % n: (io.BytesIO(data.encode('ascii')), name)
-               for n, (name, data) in enumerate(files)
-               }
-            )
+    #     files = (
+    #         ('testfile.txt', 'something'),
+    #         ('testfile.txt', 'something_new'),
+    #     )
+    #     output = self.post(
+    #         'upload',
+    #         path='upload',
+    #         data={
+    #            'file%d' % n: (io.BytesIO(data.encode('ascii')), name)
+    #            for n, (name, data) in enumerate(files)
+    #            }
+    #         )
 
-        self.assertEqual(len(files), len(output.files))
+    #     self.assertEqual(len(files), len(output.files))
 
-        first_file_url = self.url_for('open', path='upload/%s' % files[0][0])
-        self.assertIn(first_file_url, output.files)
+    #     first_file_url = self.url_for('open', path='upload/%s' % files[0][0])
+    #     self.assertIn(first_file_url, output.files)
 
-        file_contents = []
-        for filename in os.listdir(self.upload):
-            with open(os.path.join(self.upload, filename), 'r') as f:
-                file_contents.append(f.read())
-        file_contents.sort()
+    #     file_contents = []
+    #     for filename in os.listdir(self.upload):
+    #         with open(os.path.join(self.upload, filename), 'r') as f:
+    #             file_contents.append(f.read())
+    #     file_contents.sort()
 
-        expected_file_contents = sorted(content for filename, content in files)
+    #     expected_file_contents=sorted(content for filename, content in files)
 
-        self.assertEqual(file_contents, expected_file_contents)
-        self.clear(self.upload)
+    #     self.assertEqual(file_contents, expected_file_contents)
+    #     self.clear(self.upload)
 
-    def test_upload_restrictions(self):
-        pathconf = effluxpy.compat.pathconf(self.upload)
-        maxname = pathconf['PC_NAME_MAX']
-        maxpath = pathconf['PC_PATH_MAX']
+    # def test_upload_restrictions(self):
+    #     pathconf = effluxpy.compat.pathconf(self.upload)
+    #     maxname = pathconf['PC_NAME_MAX']
+    #     maxpath = pathconf['PC_PATH_MAX']
+    #     longname = ''.join(('a',) * maxname)
 
-        longname = ''.join(('a',) * maxname)
+    #     self.assertRaises(
+    #         Page400Exception,
+    #         self.post, 'upload', path='upload', data={
+    #             'file': (io.BytesIO('test'.encode('ascii')), longname + 'a')
+    #             }
+    #         )
 
-        self.assertRaises(
-            Page400Exception,
-            self.post, 'upload', path='upload', data={
-                'file': (io.BytesIO('test'.encode('ascii')), longname + 'a')
-                }
-            )
+    #     subdirs = [longname] * (
+    #         (maxpath - len(self.upload) + len(os.sep)) //
+    #         (maxname + len(os.sep))
+    #         )
+    #     longpath = os.path.join(self.upload, *subdirs)
 
-        subdirs = [longname] * (
-            (maxpath - len(self.upload) + len(os.sep)) //
-            (maxname + len(os.sep))
-            )
-        longpath = os.path.join(self.upload, *subdirs)
+    #     os.makedirs(longpath)
+    #     self.assertRaises(
+    #         Page400Exception,
+    #         self.post, 'upload', path='upload/' + '/'.join(subdirs), data={
+    #             'file': (io.BytesIO('test'.encode('ascii')), longname)
+    #             }
+    #         )
 
-        os.makedirs(longpath)
-        self.assertRaises(
-            Page400Exception,
-            self.post, 'upload', path='upload/' + '/'.join(subdirs), data={
-                'file': (io.BytesIO('test'.encode('ascii')), longname)
-                }
-            )
-
-        self.assertRaises(
-            Page400Exception,
-            self.post, 'upload', path='upload', data={
-                'file': (io.BytesIO('test'.encode('ascii')), '..')
-                }
-            )
+    #     self.assertRaises(
+    #         Page400Exception,
+    #         self.post, 'upload', path='upload', data={
+    #             'file': (io.BytesIO('test'.encode('ascii')), '..')
+    #             }
+    #         )
 
     def test_sort(self):
 
