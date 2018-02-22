@@ -1,0 +1,5 @@
+include README.rst
+graft effluxpy/templates
+graft effluxpy/static
+graft effluxpy/plugin/player/templates
+graft effluxpy/plugin/player/static
