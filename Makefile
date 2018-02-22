@@ -58,7 +58,7 @@ showcoverage: coverage
 travis-script: pep8 flake8 coverage
 
 travis-script-sphinx:
-	travis-sphinx --nowarn --source=doc build
+	travis-sphinx build --source=docs/docs_builder/ --nowarn
 
 travis-success:
 	codecov
