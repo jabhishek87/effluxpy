@@ -43,8 +43,8 @@ You can also build yourself from sphinx sources using the documentation
 Screenshots
 -----------
 
-.. image:: https://raw.githubusercontent.com/jkabhishek/effluxpy/master/doc/screenshot.0.3.1-0.png
-  :target: https://raw.githubusercontent.com/jkabhishek/effluxpy/master/doc/screenshot.0.3.1-0.png
+.. image:: https://raw.githubusercontent.com/jkabhishek/effluxpy/master/docs/screenshot.0.3.1-0.png
+  :target: https://raw.githubusercontent.com/jkabhishek/effluxpy/master/docs/screenshot.0.3.1-0.png
   :alt: Screenshot of directory with enabled remove
 
 Features
