@@ -8,7 +8,6 @@ import os.path
 import shutil
 import tempfile
 import tarfile
-import xml.etree.ElementTree as ET
 import io
 import mimetypes
 
@@ -22,6 +21,7 @@ import effluxpy.manager
 import effluxpy.__main__
 import effluxpy.compat
 import effluxpy.tests.utils as test_utils
+import defusedxml.ElementTree
 
 PY_LEGACY = effluxpy.compat.PY_LEGACY
 range = effluxpy.compat.range  # noqa
@@ -74,7 +74,7 @@ class ListPage(Page):
 
     @classmethod
     def from_source(cls, source, response=None):
-        html = ET.fromstring(source)
+        html = defusedxml.ElementTree.fromstring(source)
         rows = [
             (
                 row[0].attrib.get('class') == 'icon inode',
@@ -115,7 +115,7 @@ class ConfirmPage(Page):
 
     @classmethod
     def from_source(cls, source, response=None):
-        html = ET.fromstring(source)
+        html = defusedxml.ElementTree.fromstring(source)
         name = cls.innerText(html.find('.//strong')).strip()
         prefix = html.find('.//strong').attrib.get('data-prefix', '')
 
